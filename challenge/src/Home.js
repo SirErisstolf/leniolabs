@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 export default class Home extends Component{
   constructor(props) {
     super(props);
-    this.state = {members: [],test :"1"};
+    this.state = {members: [],showAdancedFilter :"false"};
   }
   
   componentDidMount() {
@@ -10,12 +10,15 @@ export default class Home extends Component{
       .then(data => data.json())
       .then((data) => { this.setState({ members: data.results[0].members,originalMembers : data.results[0].members}) }); 
   }
+  toggleAdvancedSearch = (event) =>{
+    
+    this.setState({showAdancedFilter: this.state.showAdancedFilter=="false"?"true":"false"})
+  }
 
+  
   search = (event) => {
-    console.log(event.target.value);
-    //console.log(this.state.members);
     this.setState({members: this.state.originalMembers.filter(function(item) {
-      
+       
       return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
               item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
               item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
@@ -23,7 +26,91 @@ export default class Home extends Component{
               item.title.toLowerCase().includes(event.target.value.toLowerCase())
     })});
   }
+
+  search = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
+              item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.title.toLowerCase().includes(event.target.value.toLowerCase())
+    })});
+  }
+  searchByFirstName = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) 
+    })});
+  }
+  searchByLastName = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.last_name.toLowerCase().includes(event.target.value.toLowerCase()) 
+    })});
+  }
+  searchByGender = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.gender.toLowerCase().includes(event.target.value.toLowerCase())
+    })});
+  }
+  searchByParty = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.party.toLowerCase().includes(event.target.value.toLowerCase())
+    })});
+  }
+  searchByTitle = (event) => {
+    this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.title.toLowerCase().includes(event.target.value.toLowerCase())
+    })});
+  }
   render() {
+    let advancedFilter;
+    if(this.state.showAdancedFilter != "false"){
+      
+      advancedFilter = <form className="search-input">
+                          <div className = "advanced-search-input">
+                            <p>First Name:</p>
+                            <input
+                              type="text"
+                              onChange={this.searchByFirstName}
+                            />
+                          </div>
+                          <div className = "advanced-search-input">
+                            <p>LastName Name:</p>
+                            <input
+                              type="text"
+                              onChange={this.searchByLastName}
+                            />
+                          </div>  
+                          <div className = "advanced-search-input">
+                            <p>Party:</p>
+                            <input
+                              type="text"
+                              onChange={this.searchByParty}
+                            />
+                          </div>
+                          <div className = "advanced-search-input">
+                            <p>Gender:</p>
+                            <input
+                              type="text"
+                              onChange={this.searchByGender}
+                            />
+                          </div>
+                          <div className = "advanced-search-input">
+                            <p>Title:</p>
+                            <input
+                              type="text"
+                              onChange={this.searchByTitle}
+                            />
+                          </div>
+                        </form>
+    }else{
+      advancedFilter = <div></div>
+    }
     return (
       <div className = "home">
         <form className="search-input">
@@ -32,8 +119,12 @@ export default class Home extends Component{
             type="text"
             onChange={this.search}
           />
+
         </form>
-        <h1>List of Members</h1>
+        <a className = "pointer" onClick={this.toggleAdvancedSearch}> Advanced Search </a>
+         {advancedFilter}
+        
+        <h1 className = "clear">List of Members</h1>
         
         <div className = "list">
         <table >
