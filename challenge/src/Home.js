@@ -1,4 +1,10 @@
 import React, {Component} from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 export default class Home extends Component{
   constructor(props) {
     super(props);
@@ -142,7 +148,12 @@ export default class Home extends Component{
                 return (
                           <tr key = {j-1}>
                             <td className = "item-element" key = {j}>
-                              <u>{m.first_name} {m.last_name} </u>
+                              
+                            <Link to={{
+                              pathname: `/view/${m.id}`, 
+                            }}>
+                             <u>{m.first_name} {m.last_name} </u>
+                            </Link>
                             </td>
                             <td className = "item-element" key = {j+1}>
                               {m.gender} 

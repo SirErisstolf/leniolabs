@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Home from './Home';
 import Header from './Header';
 import Footer from './Footer';
+import ViewItem from './ViewItem';
 
 import './App.scss';
 import {
@@ -17,7 +18,8 @@ class App extends Component {
       <Router>
         <div>
         <Header />
-        <Route path="/" component = {Home} />
+        <Route exact path="/" component = {Home} />
+        <Route path="/view/:id" component = {ViewItem} />
         <Footer />
         </div>
       </Router>
