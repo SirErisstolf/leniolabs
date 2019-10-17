@@ -24,7 +24,9 @@ export default class Home extends Component{
                                         totalMembers : data.results[0].members.length,
                                         totalPages: Math.trunc(data.results[0].members.length/7),
                                         filtered:false,
-                                        filterValue : ''
+                                        filterValue : '',
+                                        startDate:'',
+                                        endDate:''
                                       }) }); 
   }
   toggleAdvancedSearch = (event) =>{
@@ -40,22 +42,15 @@ export default class Home extends Component{
               item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
               item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
               item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.title.toLowerCase().includes(event.target.value.toLowerCase())
+              item.title.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.date_of_birth.toLowerCase().includes(event.target.value.toLowerCase())
     })
     
 
     this.setState({filterValue:event.target.value});
     this.setState({members: members.slice(0,7)});
     this.setState({totalPages: Math.trunc(members.length/7)});
-    
-  /*  this.setState({members: this.state.originalMembers.filter(function(item) {
-       
-      return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
-              item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.title.toLowerCase().includes(event.target.value.toLowerCase())
-    })});*/
+
   }
 
   searchByFirstName = (event) => {
@@ -109,6 +104,26 @@ export default class Home extends Component{
     this.setState({totalPages: Math.trunc(members.length/7)});
   }
 
+  setStartDate = (event) => {
+    this.setState({startDate:event.target.value})
+  }
+  setEndDate = (event) => {
+    this.setState({endDate:event.target.value})
+  }
+  searchByDate = (event) => {
+    debugger;
+    let startDate = new Date(this.state.startDate);
+    let endDate = new Date(this.state.endDate);
+
+    var members = this.state.originalMembers.filter(function(item) { 
+      let date = new Date(item.date_of_birth);
+      return   endDate >= date && startDate <= date;
+    })
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
+    
+  }
+
   handlePagination = (ev) => {
 
     var filter = this.state.filterValue;   
@@ -118,8 +133,20 @@ export default class Home extends Component{
               item.last_name.toLowerCase().includes(filter.toLowerCase())  ||  
               item.gender.toLowerCase().includes(filter.toLowerCase()) ||
               item.party.toLowerCase().includes(filter.toLowerCase()) ||
-              item.title.toLowerCase().includes(filter.toLowerCase())
+              item.title.toLowerCase().includes(filter.toLowerCase()) ||
+              item.date_of_birth.toLowerCase().includes(filter.toLowerCase())
     })
+
+    if(this.state.startDate != "" && this.state.endDate != ""){
+      let startDate = new Date(this.state.startDate);
+      let endDate = new Date(this.state.endDate);
+
+      members = this.state.originalMembers.filter(function(item) { 
+      let date = new Date(item.date_of_birth);
+      return   endDate >= date && startDate <= date;
+    })
+    this.setState({members: members.slice(0,7)});
+    }
     let start = 7*ev;
     let end = 7+7*ev;
     
@@ -169,6 +196,19 @@ export default class Home extends Component{
                               onChange={this.searchByTitle}
                             />
                           </div>
+                          <div className = "advanced-search-input">
+                            <p>Birth :</p>
+                            <input
+                              type="date"
+                              onChange={this.setStartDate}
+                            />
+                            <input
+                              type="date"
+                              onChange={this.setEndDate}
+                            />
+                          
+                            <a className = "pointer" onClick={this.searchByDate}> Date Search </a>
+                          </div>
                         </form>
     }else{
       advancedFilter = <div></div>
@@ -193,6 +233,7 @@ export default class Home extends Component{
             <Col>Gender</Col>
             <Col>Party</Col>
             <Col>Title</Col>
+            <Col>Birth Date</Col>
           </Row>
           
           {
@@ -214,6 +255,9 @@ export default class Home extends Component{
                           </Col>
                           <Col >
                             {m.title} 
+                          </Col>
+                          <Col >
+                            {m.date_of_birth} 
                           </Col>
                           </Row>
                 )
