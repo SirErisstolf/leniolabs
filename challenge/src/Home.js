@@ -5,6 +5,8 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { Container,Row,Col } from 'react-bootstrap';
+
 export default class Home extends Component{
   constructor(props) {
     super(props);
@@ -131,52 +133,39 @@ export default class Home extends Component{
          {advancedFilter}
         
         <h1 className = "clear">List of Members</h1>
-        
-        <div className = "list">
-        <table >
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Gender</th>
-                  <th>Party</th>
-                  <th>Tittle</th>
-                </tr>
-              </thead>
-               <tbody>
-               {
-              this.state.members.map(function(m,j){
-                return (
-                          <tr key = {j-1}>
-                            <td className = "item-element" key = {j}>
-                              
+        <Container>
+          <Row>
+            <Col>Name</Col>
+            <Col>Gender</Col>
+            <Col>Party</Col>
+            <Col>Title</Col>
+          </Row>
+          
+          {
+            this.state.members.map(function(m,j){
+              return (
+                      <Row>
+                          <Col>
                             <Link to={{
                               pathname: `/view/${m.id}`, 
                             }}>
-                             <u>{m.first_name} {m.last_name} </u>
+                            <u>{m.first_name} {m.last_name} </u>
                             </Link>
-                            </td>
-                            <td className = "item-element" key = {j+1}>
-                              {m.gender} 
-                            </td>
-                            <td className = "item-element" key = {j+2}>
-                              {m.party} 
-                            </td>
-                            <td className = "item-element" key = {j+3}>
-                              {m.title} 
-                            </td>
-                            
-                          </tr>
+                          </Col>
+                          <Col >
+                            {m.gender} 
+                          </Col>
+                          <Col >
+                            {m.party} 
+                          </Col>
+                          <Col >
+                            {m.title} 
+                          </Col>
+                          </Row>
                 )
-
-
               })
             }
-               </tbody>
-            </table>
-            
-          
-        </div>
-        
+        </Container>        
       </div>
     );
   }

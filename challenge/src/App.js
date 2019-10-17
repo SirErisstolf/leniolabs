@@ -5,6 +5,7 @@ import Footer from './Footer';
 import ViewItem from './ViewItem';
 
 import './App.scss';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import {
   BrowserRouter as Router,
 //  Switch,
