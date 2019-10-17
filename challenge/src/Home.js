@@ -10,13 +10,22 @@ import { Container,Row,Col } from 'react-bootstrap';
 export default class Home extends Component{
   constructor(props) {
     super(props);
-    this.state = {members: [],showAdancedFilter :"false"};
+    this.state = {  members: [],
+                    showAdancedFilter :"false",
+                    paginationSize : 7
+                  };
   }
   
   componentDidMount() {
     fetch('https://api.propublica.org/congress/v1/115/senate/members.json',{headers: {'X-API-Key':'xt1aCaYtZjkGpJyZRi6DOiEYHCFmqIZlKb4zVAKO'}})
       .then(data => data.json())
-      .then((data) => { this.setState({ members: data.results[0].members,originalMembers : data.results[0].members}) }); 
+      .then((data) => { this.setState({ members: data.results[0].members.slice(0,7),
+                                        originalMembers : data.results[0].members,
+                                        totalMembers : data.results[0].members.length,
+                                        totalPages: Math.trunc(data.results[0].members.length/7),
+                                        filtered:false,
+                                        filterValue : ''
+                                      }) }); 
   }
   toggleAdvancedSearch = (event) =>{
     
@@ -25,57 +34,102 @@ export default class Home extends Component{
 
   
   search = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
+   var members = this.state.originalMembers.filter(function(item) {
        
       return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
               item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
               item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
               item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
               item.title.toLowerCase().includes(event.target.value.toLowerCase())
-    })});
+    })
+    
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
+    
+  /*  this.setState({members: this.state.originalMembers.filter(function(item) {
+       
+      return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
+              item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
+              item.title.toLowerCase().includes(event.target.value.toLowerCase())
+    })});*/
   }
 
-  search = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
-      return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.last_name.toLowerCase().includes(event.target.value.toLowerCase())  ||  
-              item.gender.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.party.toLowerCase().includes(event.target.value.toLowerCase()) ||
-              item.title.toLowerCase().includes(event.target.value.toLowerCase())
-    })});
-  }
   searchByFirstName = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
+
+    var members = this.state.originalMembers.filter(function(item) { 
       return  item.first_name.toLowerCase().includes(event.target.value.toLowerCase()) 
-    })});
+    })
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
+    
   }
   searchByLastName = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
+    var members = this.state.originalMembers.filter(function(item) { 
       return  item.last_name.toLowerCase().includes(event.target.value.toLowerCase()) 
-    })});
+    })
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
   }
   searchByGender = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
-      return  item.gender.toLowerCase().includes(event.target.value.toLowerCase())
-    })});
+    var members = this.state.originalMembers.filter(function(item) { 
+      return  item.gender.toLowerCase().includes(event.target.value.toLowerCase()) 
+    })
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
   }
   searchByParty = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
-      return  item.party.toLowerCase().includes(event.target.value.toLowerCase())
-    })});
+    debugger;
+    var members = this.state.originalMembers.filter(function(item) { 
+      return  item.party.toLowerCase().includes(event.target.value.toLowerCase()) 
+    })
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
+    this.setState({filtered: true});
+    
   }
   searchByTitle = (event) => {
-    this.setState({members: this.state.originalMembers.filter(function(item) {
-       
-      return  item.title.toLowerCase().includes(event.target.value.toLowerCase())
-    })});
+    var members = this.state.originalMembers.filter(function(item) { 
+      return  item.title.toLowerCase().includes(event.target.value.toLowerCase()) 
+    })
+
+    this.setState({filterValue:event.target.value});
+    this.setState({members: members.slice(0,7)});
+    this.setState({totalPages: Math.trunc(members.length/7)});
+  }
+
+  handlePagination = (ev) => {
+
+    var filter = this.state.filterValue;   
+    var members = this.state.originalMembers.filter(function(item) {
+    
+      return  item.first_name.toLowerCase().includes(filter.toLowerCase()) ||
+              item.last_name.toLowerCase().includes(filter.toLowerCase())  ||  
+              item.gender.toLowerCase().includes(filter.toLowerCase()) ||
+              item.party.toLowerCase().includes(filter.toLowerCase()) ||
+              item.title.toLowerCase().includes(filter.toLowerCase())
+    })
+    let start = 7*ev;
+    let end = 7+7*ev;
+    
+    this.setState({members:members.slice(start,end)})
   }
   render() {
+    let pages=[];
+    for (let i=0; i< this.state.totalPages; i++) {
+      pages.push(<div className="paginator" key={i} onClick={() => this.handlePagination(i)}>{i+1}</div>  )
+    }
     let advancedFilter;
     if(this.state.showAdancedFilter != "false"){
       
@@ -144,7 +198,7 @@ export default class Home extends Component{
           {
             this.state.members.map(function(m,j){
               return (
-                      <Row>
+                      <Row key={j-1}>
                           <Col>
                             <Link to={{
                               pathname: `/view/${m.id}`, 
@@ -165,7 +219,11 @@ export default class Home extends Component{
                 )
               })
             }
-        </Container>        
+            <div className="pages">
+              {pages}
+            </div>
+        </Container>   
+             
       </div>
     );
   }

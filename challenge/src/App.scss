@@ -60,3 +60,15 @@ th{
 .clear{
   clear:both
 }
+.paginator{
+  float:left;
+  margin:5px;
+  border:1px solid;
+  width:30px;
+  text-align:center;
+  cursor:pointer;
+}
+.pages{
+  padding-left:200px;
+  display:table-cell;
+}
